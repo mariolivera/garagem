@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -6,42 +6,55 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
+import Drawer  from '@mui/material/Drawer';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import { Divider } from '@mui/material';
+import {List, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
+import { Home, DirectionsCar, Settings } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+
+import './styles.css';
 
 export default function Navbar() {
-  const [auth, setAuth] = React.useState(true);
+  const Navigate = useNavigate();
+  const [menu, setmenu] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
-
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
+  //const abrirMenu = () => setmenu(true);
+  const handleMenuLateral = () => setmenu (!menu);
+  const redirecionar = (url)=> {
+    Navigate (url);
+    setmenu(false);
+  }
+
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={auth}
-              onChange={handleChange}
-              aria-label="login switch"
-            />
-          }
-          label={auth ? 'Logout' : 'Login'}
-        />
-      </FormGroup>
+      <Drawer onClose={handleMenuLateral} open={menu}>
+        <div className='menu'>Menu
+          <Divider/>
+          <List>
+            <ListItemButton onClick={() => redirecionar('/')}>
+              <ListItemIcon><Home/></ListItemIcon>
+              <ListItemText> inicio</ListItemText>
+            </ListItemButton>
+            <ListItemButton onClick={() => redirecionar('/listar')}>
+              <ListItemIcon><DirectionsCar/></ListItemIcon>
+              <ListItemText>veiculos</ListItemText>
+            </ListItemButton>
+            <ListItemButton onClick={() => redirecionar('/config')}>
+              <ListItemIcon><Settings/></ListItemIcon>
+              <ListItemText> Configuração </ListItemText>
+            </ListItemButton>
+          </List>
+        </div>
+      </Drawer>
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -50,13 +63,14 @@ export default function Navbar() {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={handleMenuLateral}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Photos
           </Typography>
-          {auth && (
+          
             <div>
               <IconButton
                 size="large"
@@ -83,11 +97,11 @@ export default function Navbar() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={handleClose}>Perfil</MenuItem>
+                <MenuItem style={{color:'red'}} onClick={() => {handleClose(); redirecionar('/entar')}} >Desconectar</MenuItem>
               </Menu>
             </div>
-          )}
+          )
         </Toolbar>
       </AppBar>
     </Box>
